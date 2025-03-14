@@ -1,0 +1,4 @@
+train: /code/datasets/yolo11/train_obj_8/images
+val: /code/datasets/yolo11/train_obj_8/images
+nc: 1
+names: ['object_8']

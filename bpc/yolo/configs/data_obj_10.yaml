@@ -1,4 +1,0 @@
-train: /ipd_codebase/datasets/yolo11/ipd_bop_data_jan25_1_obj_11/images
-val: /ipd_codebase/datasets/yolo11/ipd_bop_data_jan25_1_obj_11/images
-nc: 1
-names: ['object_10']

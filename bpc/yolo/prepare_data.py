@@ -67,11 +67,13 @@ def prepare_train_pbr(train_pbr_path, output_path, obj_id):
             num_imgs = len(scene_gt_data)  # or use max key from scene_gt_data
             for img_id in range(num_imgs):
                 img_key = str(img_id)
-                img_file = os.path.join(rgb_path, f"{img_id:06d}.jpg")
+                img_file_jpg = os.path.join(rgb_path, f"{img_id:06d}.jpg")
+                img_file_png = os.path.join(rgb_path, f"{img_id:06d}.png")
+                img_file = img_file_jpg if os.path.exists(img_file_jpg) else img_file_png if os.path.exists(img_file_png) else None
 
-                if not os.path.exists(img_file):
-                    # If the image doesn't exist, skip
+                if img_file is None:
                     continue
+
                 if img_key not in scene_gt_data or img_key not in scene_gt_info_data:
                     # If there's no ground-truth info for this frame, skip
                     continue
@@ -113,22 +115,21 @@ def prepare_train_pbr(train_pbr_path, output_path, obj_id):
 def generate_yaml(output_path, obj_id):
     """
     Generate a YOLO .yaml file for training/validation.
-    Writes file as: idp_codebase/yolo/configs/data_obj_{obj_id}.yaml
+    Writes file as: bpc/yolo/configs/data_obj_{obj_id}.yaml
     """
-    # Use the current working directory to construct the correct path
-    yolo_configs_dir = os.path.join(os.getcwd(), "yolo", "configs")
+    # Get the directory of THIS script (bpc/yolo/)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    yolo_configs_dir = os.path.join(script_dir, "configs")
     os.makedirs(yolo_configs_dir, exist_ok=True)
 
     # The 'images' directory under output_path
     images_dir = os.path.join(output_path, "images")
-    # For simplicity, we might use the same images for train & val 
-    # (especially if you only want to test or overfit).
     train_path = os.path.abspath(images_dir)
-    val_path   = os.path.abspath(images_dir)
+    val_path = os.path.abspath(images_dir)
 
     yaml_path = os.path.join(yolo_configs_dir, f"data_obj_{obj_id}.yaml")
 
-    # We have only 1 class, so 'nc=1', and the class name is e.g. "object_11"
+    # YAML content (same as before)
     yaml_content = {
         "train": train_path,
         "val": val_path,
@@ -136,7 +137,6 @@ def generate_yaml(output_path, obj_id):
         "names": [f"object_{obj_id}"]
     }
 
-    # Write out the .yaml file
     with open(yaml_path, "w") as f:
         for key, value in yaml_content.items():
             f.write(f"{key}: {value}\n")
