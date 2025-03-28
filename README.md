@@ -42,10 +42,10 @@ docker build . -t bpc:2025.1.31
 
 ### Run Docker
 ```bash
-docker run -p 8888:8888 --shm-size=1g --runtime nvidia --gpus all -v $(pwd):/code -ti bpc:2025.1.31 bash
+docker run -p 8888:8888 --shm-size=24g --runtime nvidia --gpus all -v $(pwd):/code -ti bpc:2025.1.31 bash
 cd /code
 ```
-**Hint:** Ensure you return to the `bpc_baseline` folder before running the pipeline.
+**Hint:** Ensure you return to the `bpc_baseline` folder before running the pipeline. Change shm-size with what fits your needs, e.g. 8g, 16g, etc.
 
 ### Download Data
 ```bash
@@ -94,7 +94,7 @@ python3 train_pose.py \
 
 ### Download Pretrained Models
 ```bash
-wget https://storage.googleapis.com/akasha-public/IBPC/baseline_solution/v1/models.zip
+wget https://huggingface.co/DrQY/BOP_baseline_model/resolve/main/models.zip
 unzip models.zip
 rm models.zip
 ```
